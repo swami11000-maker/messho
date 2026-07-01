@@ -1,0 +1,4 @@
+import { ReferralsPage } from "@/components/customer-pages";
+import { PublicFooter } from "@/components/brand";
+import { PublicNav } from "@/components/public-shell";
+export default function Page(){ return <main className="bg-[#f6f8ff]"><PublicNav active="Referrals"/><section className="relative overflow-hidden bg-[radial-gradient(circle_at_left,#0f5fff,transparent_32%),radial-gradient(circle_at_right,#c119ff,transparent_34%),linear-gradient(135deg,#052a97,#081f84_45%,#8a16e8)] px-4 py-16 lg:px-8"><div className="safe-area"><div className="inline-flex rounded-full bg-white/10 px-4 py-2 text-xs font-black text-white">21 DAYS SPIN REWARD SYSTEM</div><h1 className="mt-5 text-5xl font-black text-white">Rewards + Referrals</h1><p className="mt-4 text-lg text-blue-100">Invite friends and earn a direct membership bonus.</p></div></section><section className="safe-area px-4 py-10 lg:px-8"><ReferralsPage publicMode/></section><PublicFooter/></main> }

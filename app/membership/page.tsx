@@ -1,0 +1,4 @@
+import { MembershipPage } from "@/components/customer-pages";
+import { PublicFooter } from "@/components/brand";
+import { PublicNav } from "@/components/public-shell";
+export default function Page(){ return <main className="bg-[#f6f8ff]"><PublicNav active="Membership"/><section className="relative overflow-hidden bg-[radial-gradient(circle_at_left,#0759ff,transparent_34%),radial-gradient(circle_at_right,#b000ff,transparent_34%),linear-gradient(135deg,#022f9f,#061a78_45%,#8615df)] px-4 py-14 lg:px-8"><div className="safe-area"><p className="text-sm font-bold text-blue-100">Home › Membership</p><h1 className="mt-4 text-5xl font-black text-white">Buy Membership</h1><p className="mt-4 text-lg text-blue-100">Choose a plan and get daily spins for 21 days.</p></div></section><section className="safe-area px-4 py-10 lg:px-8"><MembershipPage publicMode/></section><PublicFooter/></main> }
