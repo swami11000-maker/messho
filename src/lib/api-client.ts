@@ -29,7 +29,7 @@ export const registerUnauthorizedHandler = (handler: (() => void) | null) => {
   unauthorizedHandler = handler;
 };
 
-const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:5000/api';
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 const parseJsonSafe = async <T>(response: Response): Promise<T | null> => {
   const contentType = response.headers.get('content-type') ?? '';
