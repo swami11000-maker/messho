@@ -37,7 +37,7 @@ export function MembershipPage({ publicMode = false }: { publicMode?: boolean })
 		}
 		setBuying(true);
 		try {
-			const response = await apiCall<ApiResponse>('POST', '/platform/memberships', { planId: plan.id });
+			const response = await apiCall<ApiResponse>('GET', `/membership/buy-membership/${plan.id}`);
 			if (response.success) {
 				success(response.message);
 				await refresh();
