@@ -45,6 +45,7 @@ const getForwardedCookieHeader = async () => {
 		const { cookies } = await import('next/headers');
 		const cookieStore = await cookies();
 		const token = cookieStore.get('token')?.value;
+		console.log('Forwarding token cookie:', token);
 		return token ? `token=${token}` : undefined;
 	} catch {
 		return undefined;
