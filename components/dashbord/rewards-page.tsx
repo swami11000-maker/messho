@@ -135,7 +135,7 @@ export function RewardsPage() {
 									>
 										<td className="py-3 pr-4 font-medium text-[#121826]">{entry.name || '—'}</td>
 										<td className="py-3 pr-4 font-bold text-[#121826]">
-											{formatMoney(entry.amount * 100?? 0)}
+											{formatMoney(entry.amount * 100)}
 										</td>
 										<td className="py-3 pr-4">
 											<span className="rounded-full bg-[#f4f0ea] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#8a7653]">

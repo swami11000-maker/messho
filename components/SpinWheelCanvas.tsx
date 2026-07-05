@@ -174,7 +174,7 @@ export default function SpinPage({ onSpin }: { onSpin?: () => Promise<number> })
     const currentRotation = rotationRef.current;
     const currentMod = ((currentRotation % 360) + 360) % 360;
 
-    let delta = (requiredAngle - currentMod + 360) % 360;
+    const delta = (requiredAngle - currentMod + 360) % 360;
 
     // Add full revolutions for visual effect
     const rounds = 18;
