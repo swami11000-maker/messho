@@ -25,6 +25,7 @@ type Withdrawal = {
 	walletAddress: string;
 	status: string;
 	createdAt: string;
+	txHash?: string;
 	user?: { name: string; email: string };
 };
 type SupportTicket = {
@@ -191,7 +192,7 @@ export function AdminWithdrawals() {
 		<>
 			<AdminTitle title="Withdrawal Desk" desc="Review requests, mark treasury processing, paid, or reject and refund." />
 			<div className="space-y-3">
-				{data?.withdrawals.map((item) => <AdminCard key={item._id} className="flex flex-col justify-between gap-4 p-5 md:flex-row md:items-center"><div><b>{item.user?.name} · {formatMoney(item.amount)}</b><p className="mt-1 text-xs text-slate-400">{item.walletAddress}</p></div><div className="flex flex-wrap items-center gap-2"><Status value={item.status}/>{!['paid','rejected'].includes(item.status) && <><button onClick={() => review(item._id, 'processing')} className="rounded-xl bg-blue-500/20 px-3 py-2 text-xs font-black text-blue-300">Processing</button><button onClick={() => review(item._id, 'paid')} className="rounded-xl bg-emerald-500 px-3 py-2 text-xs font-black">Paid</button><button onClick={() => review(item._id, 'rejected')} className="rounded-xl bg-red-500/20 px-3 py-2 text-xs font-black text-red-300">Reject</button></>}</div></AdminCard>)}
+				{data?.withdrawals.map((item) => <AdminCard key={item._id} className="flex flex-col justify-between gap-4 p-5 md:flex-row md:items-center"><div><b>{item.user?.name} · {formatMoney(item.amount)}</b><p className="mt-1 text-xs text-slate-400">{item.walletAddress}{item.txHash ? ` · TX: ${item.txHash.slice(0, 18)}...` : ''}</p></div><div className="flex flex-wrap items-center gap-2"><Status value={item.status}/>{!['paid','rejected'].includes(item.status) && <><button onClick={() => review(item._id, 'processing')} className="rounded-xl bg-blue-500/20 px-3 py-2 text-xs font-black text-blue-300">Processing</button><button onClick={() => review(item._id, 'paid')} className="rounded-xl bg-emerald-500 px-3 py-2 text-xs font-black">Paid</button><button onClick={() => review(item._id, 'rejected')} className="rounded-xl bg-red-500/20 px-3 py-2 text-xs font-black text-red-300">Reject</button></>}</div></AdminCard>)}
 				{data?.withdrawals.length === 0 && <Empty text="No withdrawal requests." />}
 			</div>
 		</>

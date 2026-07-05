@@ -295,7 +295,7 @@ function Sidebar({
 
 									<h3 className="mt-3 text-[15px] font-black">Refer & Earn</h3>
 
-									<p className="mt-1.5 text-[11px] font-bold leading-5 text-[#071b4d]/75">Earn 5% on referred membership purchases.</p>
+									<p className="mt-1.5 text-[11px] font-bold leading-5 text-[#071b4d]/75">Earn 5% + 3$ on referred membership purchases.</p>
 								</div>
 
 								<div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-white/45">

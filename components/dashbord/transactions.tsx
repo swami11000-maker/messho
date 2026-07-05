@@ -74,6 +74,8 @@ export function Transactions({ full = false, data }: { full?: boolean; data?: Tr
               <Filter size={16} />
               <select value={typeFilter} onChange={(event) => setTypeFilter(event.target.value)} className="bg-transparent outline-none">
                 <option value="all">All types</option>
+                <option value="deposit">Deposits</option>
+								<option value="crypto_deposit">Crypto Deposits</option>
                 <option value="membership">Memberships</option>
                 <option value="spin_reward">Spin rewards</option>
                 <option value="referral">Referrals</option>

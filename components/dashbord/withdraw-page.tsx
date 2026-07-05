@@ -35,9 +35,11 @@ export function WithdrawPage() {
       error('Enter a valid EVM wallet address.');
       return;
     }
+    const ethInrRate = Number(process.env.NEXT_PUBLIC_ETH_INR_RATE ?? '84160');
+    const ethAmount = ethInrRate > 0 ? (rupees / ethInrRate).toFixed(18) : '';
     setSubmitting(true);
     try {
-      const response = await apiCall<ApiResponse>('POST', '/platform/withdrawals', { amount: Math.round(rupees * 100), walletAddress });
+      const response = await apiCall<ApiResponse>('POST', '/platform/withdrawals', { amount: Math.round(rupees * 100), walletAddress, ethAmount });
       if (response.success) {
         success(response.message);
         setAmount('');

@@ -3,19 +3,15 @@
 import { Gift, Trophy, Users } from 'lucide-react';
 import { Kpi, PageShell, PageTitle } from './dashboard-ui';
 import { Panel } from './premium-hero';
-import { Transactions } from './transactions';
 import { useOverview } from '@/hooks/use-overview';
 import { formatMoney } from '@/libs/format';
 
 export function RewardsGrowth() {
 	const { overview } = useOverview();
-	const rewardTransactions = overview?.transactions.filter((item) => item.amount > 0) ?? [];
-	const total = rewardTransactions.reduce((sum, item) => sum + item.amount, 0);
-	const bars = Array.from({ length: 6 }, (_, index) => {
-		const amount = rewardTransactions[index]?.amount ?? 0;
-		const max = Math.max(...rewardTransactions.map((item) => item.amount), 1);
-		return `${Math.max(8, Math.round((amount / max) * 100))}%`;
-	}).reverse();
+	const rewardHistory = overview?.rewardsHistory ?? [];
+	// Compute total from the reward entries
+	const total = rewardHistory.reduce((sum, entry) => sum + (entry.amount || 0), 0);
+
 	return (
 		<Panel className="p-5">
 			<p className="text-[11px] font-black uppercase tracking-[0.16em] text-[#8a7653]">Growth</p>
@@ -23,7 +19,7 @@ export function RewardsGrowth() {
 				<div>
 					<h2 className="text-xl font-black tracking-[-0.04em] text-[#121826]">Rewards Growth</h2>
 					<h3 className="mt-3 text-3xl font-black tracking-[-0.05em] text-[#121826]">{formatMoney(total)}</h3>
-					<p className="mt-1 text-xs font-bold text-emerald-600">{rewardTransactions.length} recent reward entries</p>
+					<p className="mt-1 text-xs font-bold text-emerald-600">{rewardHistory.length} recent reward entries</p>
 				</div>
 				<div className="grid h-12 w-12 place-items-center rounded-2xl bg-[#eef8f1] text-emerald-600">
 					<Trophy size={24} />
@@ -47,10 +43,38 @@ export function RewardsGrowth() {
 	);
 }
 
+// Static bar heights for the chart (unchanged)
+const bars = [40, 60, 30, 80, 50, 70, 45, 55, 65, 35];
+
 export function RewardsPage() {
 	const { overview } = useOverview();
-	const spinRewards = overview?.transactions.filter((item) => item.type === 'spin_reward').reduce((sum, item) => sum + item.amount, 0) ?? 0;
-	const referralRewards = overview?.transactions.filter((item) => item.type === 'referral').reduce((sum, item) => sum + item.amount, 0) ?? 0;
+	const rewardHistory = overview?.rewardsHistory ?? [];
+
+	// Compute totals by type
+	const spinRewards = rewardHistory
+		.filter((entry) => entry.type === 'SPIN')
+		.reduce((sum, entry) => sum + (entry.amount || 0), 0);
+
+	const referralRewards = rewardHistory
+		.filter((entry) => entry.type === 'REFERRAL')
+		.reduce((sum, entry) => sum + (entry.amount || 0), 0);
+
+	// Format date for display
+	const formatDate = (dateString: string) => {
+		try {
+			const date = new Date(dateString);
+			return new Intl.DateTimeFormat('en-US', {
+				month: 'short',
+				day: 'numeric',
+				year: 'numeric',
+				hour: '2-digit',
+				minute: '2-digit',
+			}).format(date);
+		} catch {
+			return dateString;
+		}
+	};
+
 	return (
 		<PageShell>
 			<PageTitle
@@ -63,7 +87,7 @@ export function RewardsPage() {
 				<Kpi
 					icon={Trophy}
 					title="Total Rewards"
-					value={formatMoney(overview?.user.rewardBalance ?? 0)}
+					value={formatMoney(overview?.user?.rewardBalance ?? 0)}
 					sub="Available balance"
 					tone="navy"
 				/>
@@ -71,7 +95,7 @@ export function RewardsPage() {
 					icon={Gift}
 					title="Recent Spin Rewards"
 					value={formatMoney(spinRewards)}
-					sub="Latest transactions"
+					sub="Latest rewardsHistory"
 					tone="gold"
 				/>
 				<Kpi
@@ -83,8 +107,49 @@ export function RewardsPage() {
 				/>
 			</div>
 
-			<RewardsGrowth />
-			<Transactions />
+			{/* Table Section */}
+			<Panel className="mt-6 p-5">
+				<h3 className="text-lg font-bold tracking-[-0.02em] text-[#121826]">Reward History</h3>
+				<div className="mt-4 overflow-x-auto">
+					<table className="w-full text-sm">
+						<thead>
+							<tr className="border-b border-[#eadfcd] text-left text-xs font-bold uppercase tracking-wider text-[#8a7653]">
+								<th className="pb-3 pr-4">Name</th>
+								<th className="pb-3 pr-4">Amount</th>
+								<th className="pb-3 pr-4">Type</th>
+								<th className="pb-3">Date</th>
+							</tr>
+						</thead>
+						<tbody>
+							{rewardHistory.length === 0 ? (
+								<tr>
+									<td colSpan={4} className="py-6 text-center text-sm text-[#8a7653]">
+										No rewards recorded yet.
+									</td>
+								</tr>
+							) : (
+								rewardHistory.map((entry, index) => (
+									<tr
+										key={index}
+										className="border-b border-[#eadfcd]/40 last:border-0"
+									>
+										<td className="py-3 pr-4 font-medium text-[#121826]">{entry.name || '—'}</td>
+										<td className="py-3 pr-4 font-bold text-[#121826]">
+											{formatMoney(entry.amount * 100?? 0)}
+										</td>
+										<td className="py-3 pr-4">
+											<span className="rounded-full bg-[#f4f0ea] px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#8a7653]">
+												{entry.type || 'UNKNOWN'}
+											</span>
+										</td>
+										<td className="py-3 text-[#5a4e3c]">{formatDate(entry.createdAt)}</td>
+									</tr>
+								))
+							)}
+						</tbody>
+					</table>
+				</div>
+			</Panel>
 		</PageShell>
 	);
 }

@@ -43,10 +43,16 @@ export interface Membership {
 	status: 'active' | 'expired';
 	earned: number;
 }
-
+export interface RewardHistoryItem {
+  name: string;
+  amount: number;
+  type: 'SPIN' | 'REFERRAL' | string;
+  createdAt: string;
+  updatedAt: string;
+}
 export interface Transaction {
 	_id: string;
-	type: 'deposit' | 'membership' | 'spin_reward' | 'withdrawal' | 'referral';
+	type: 'deposit' | 'membership' | 'spin_reward' | 'withdrawal' | 'referral' | 'membership_purchase' | 'crypto_deposit';
 	amount: number;
 	status: string;
 	reference: string;
@@ -60,6 +66,7 @@ export interface OverviewResponse {
 	data: {
 		user: User;
 		memberships: Membership[];
+		rewardsHistory: RewardHistoryItem[];
 		transactions: Transaction[];
 		stats: {
 			activePlans: number;

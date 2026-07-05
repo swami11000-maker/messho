@@ -23,6 +23,8 @@ import {
 	Zap,
 } from 'lucide-react';
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
+import { apiCall } from '@/hooks/api-call-hook';
+import type { ApiResponse } from '@/libs/types';
 
 interface EthereumProvider {
 	request<T = unknown>(args: { method: string; params?: unknown[] | Record<string, unknown> }): Promise<T>;
@@ -242,20 +244,17 @@ export default function WalletPage() {
 		[address, getProvider],
 	);
 
-	const loadSavedWallet = useCallback(async () => {
-		try {
-			const response = await fetch('/api/wallet/status', { method: 'GET', credentials: 'include', cache: 'no-store' });
-
-			if (!response.ok) return;
-
-			const result = (await response.json()) as WalletStatusResponse;
-
-			setSavedWallet(result.walletAddress ?? '');
-			setVerified(Boolean(result.verified));
-		} catch {
-			// Saved-wallet API is optional during initial UI integration.
-		}
-	}, []);
+ 	const loadSavedWallet = useCallback(async () => {
+ 		try {
+ 			const response = await apiCall<{ success: boolean; data: { walletAddress?: string | null; verified?: boolean } }>('GET', '/wallet/status');
+ 			if (response.success && response.data) {
+ 				setSavedWallet(response.data.walletAddress ?? '');
+ 				setVerified(Boolean(response.data.verified));
+ 			}
+ 		} catch {
+ 			// Saved-wallet API is optional during initial UI integration.
+ 		}
+ 	}, []);
 
 	const hydrateWallet = useCallback(async () => {
 		const provider = getProvider();
@@ -514,28 +513,21 @@ export default function WalletPage() {
 
 			setTransactionHash(hash);
 
-			const depositResponse = await fetch('/api/wallet/deposit', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				credentials: 'include',
-				body: JSON.stringify({
-					transactionHash: hash,
-					senderAddress: address,
-					receiverAddress: TREASURY_WALLET,
-					inrAmount: numericAmount,
-					ethAmount: exactEthAmount,
-					chainId,
-					rate: ETH_INR_RATE,
-				}),
+			const depositResponse = await apiCall<ApiResponse>('POST', '/wallet/deposit', {
+				transactionHash: hash,
+				senderAddress: address,
+				receiverAddress: TREASURY_WALLET,
+				inrAmount: numericAmount,
+				ethAmount: exactEthAmount,
+				chainId,
+				rate: ETH_INR_RATE,
 			});
 
-			const depositResult = await depositResponse.json();
-
-			if (!depositResponse.ok) {
-				throw new Error(depositResult.message ?? 'Transaction sent, but backend registration failed.');
+			if (depositResponse.success) {
+				showNotice('success', 'Transaction submitted. Your deposit is being verified.');
+			} else {
+				throw new Error(depositResponse.message ?? 'Transaction sent, but backend registration failed.');
 			}
-
-			showNotice('success', 'Transaction submitted. Your deposit is being verified.');
 
 			await refreshBalance(address);
 		} catch (error) {
