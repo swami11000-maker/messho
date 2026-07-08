@@ -110,7 +110,7 @@ export function AuthPage({ mode, resetToken, referralCode }: AuthPageProps) {
 	} = useForm<AuthFormValues>({
 		resolver: zodResolver(schema),
 
-		defaultValues: { name: '', email: '', password: '', confirmPassword: '' ,referralCode :''},
+		defaultValues: { name: '', email: '', password: '', confirmPassword: '', referralCode: '' },
 
 		mode: 'onTouched',
 	});
