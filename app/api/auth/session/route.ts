@@ -31,13 +31,10 @@ export async function POST(req: NextRequest) {
 	
 	response.cookies.set(TOKEN_KEY, accessToken, {
 		httpOnly: true,
-		secure: isProduction, // Must be true in production
-		// CRITICAL: Use 'none' for cross-domain, 'lax' for same-domain
+		secure: isProduction,
 		sameSite: isCrossDomain ? 'none' : 'lax',
 		path: '/',
-		maxAge: 60 * 60 * 24 * 7, // 7 days
-		// Add domain for production (optional but recommended)
-		// domain: isProduction ? '.yourdomain.com' : undefined,
+		maxAge: 60 * 60 * 24 * 7,
 	});
 
 	return response;
@@ -56,7 +53,6 @@ export async function DELETE(req: NextRequest) {
 		sameSite: isCrossDomain ? 'none' : 'lax',
 		path: '/',
 		maxAge: 0,
-		// domain: isProduction ? '.yourdomain.com' : undefined,
 	});
 
 	return response;

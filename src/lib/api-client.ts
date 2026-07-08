@@ -23,6 +23,10 @@ export const registerUnauthorizedHandler = (handler: (() => void) | null) => {
 
 const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
+if (typeof window === 'undefined' && baseUrl && baseUrl.includes('localhost') && process.env.NODE_ENV === 'production') {
+	console.warn('[api-client] NEXT_PUBLIC_API_BASE_URL points to localhost in production. Override it in Vercel Dashboard environment variables.');
+}
+
 const parseJsonSafe = async <T>(response: Response): Promise<T | null> => {
 	const contentType = response.headers.get('content-type') ?? '';
 	if (!contentType.includes('application/json')) {
@@ -45,7 +49,6 @@ const getForwardedCookieHeader = async () => {
 		const { cookies } = await import('next/headers');
 		const cookieStore = await cookies();
 		const token = cookieStore.get('token')?.value;
-		console.log('Forwarding token cookie:', token);
 		return token ? `token=${token}` : undefined;
 	} catch {
 		return undefined;
