@@ -63,10 +63,26 @@ export const requestApi = async <TResponse, TBody = unknown>(
 	body?: TBody,
 	options: ApiRequestOptions = {},
 ): Promise<ApiEnvelope<TResponse>> => {
+	if (!baseUrl) {
+		throw new Error('NEXT_PUBLIC_API_BASE_URL environment variable is required');
+	}
+
 	const headers = new Headers(options.headers);
 	headers.set('Content-Type', 'application/json');
-	const cookieHeader = await getForwardedCookieHeader();
-	if (cookieHeader) headers.set('Cookie', cookieHeader);
+
+	// Only forward cookies on server-side (client uses credentials: 'include')
+	if (typeof window === 'undefined') {
+		const cookieHeader = await getForwardedCookieHeader();
+		if (cookieHeader) {
+			headers.set('Cookie', cookieHeader);
+
+			// Extract token from cookie for Authorization header
+			const tokenMatch = cookieHeader.match(/token=([^;]+)/);
+			if (tokenMatch) {
+				headers.set('Authorization', `Bearer ${tokenMatch[1]}`);
+			}
+		}
+	}
 
 	const response = await fetch(`${baseUrl}${path}`, {
 		method,
@@ -74,31 +90,24 @@ export const requestApi = async <TResponse, TBody = unknown>(
 		credentials: options.withCredentials ? 'include' : 'same-origin',
 		cache: 'no-store',
 		body: body !== undefined && method !== 'GET' ? JSON.stringify(body) : undefined,
-	}).catch((error: unknown) => {
-		throw new ApiClientError(0, 'API unavailable', error);
 	});
 
 	const payload = await parseJsonSafe<ApiEnvelope<TResponse>>(response);
-	const fallbackMessage = response.ok ? 'Request succeeded' : 'Request failed';
-
-	if (!payload) {
-		if (!response.ok) {
-			const error = new ApiClientError(response.status, fallbackMessage);
-			if (response.status === 401) {
-				unauthorizedHandler?.();
-			}
-			throw error;
-		}
-
-		return { success: true, message: fallbackMessage } as ApiSuccessPayload<TResponse>;
-	}
 
 	if (!response.ok) {
-		const error = new ApiClientError(response.status, payload.message ?? fallbackMessage, payload);
+		const errorPayload = payload as ApiErrorPayload;
+		const errorMessage = errorPayload?.message || (await response.text()) || response.statusText;
+		const error = new ApiClientError(response.status, errorMessage, errorPayload);
+
 		if (response.status === 401) {
 			unauthorizedHandler?.();
 		}
 		throw error;
+	}
+
+	// Response is OK, but may not have JSON payload
+	if (!payload) {
+		return { success: true, message: 'Request succeeded' } as ApiSuccessPayload<TResponse>;
 	}
 
 	return payload;

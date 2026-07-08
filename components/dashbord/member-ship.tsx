@@ -38,6 +38,7 @@ export function MembershipPage({ publicMode = false }: { publicMode?: boolean })
 		setBuying(true);
 		try {
 			const response = await apiCall<ApiResponse>('GET', `/membership/buy-membership/${plan.id}`);
+			console.log('Buy membership response:', response);
 			if (response.success) {
 				success(response.message);
 				await refresh();
