@@ -1,3 +1,5 @@
+import { getToken } from "../providers/authToken";
+
 export type ApiErrorPayload = { success: false; message: string; errors?: Array<{ field: string; message: string }> };
 
 export type ApiSuccessPayload<T> = { success: true; message: string; data?: T };
@@ -32,7 +34,6 @@ const parseJsonSafe = async <T>(response: Response): Promise<T | null> => {
 	if (!contentType.includes('application/json')) {
 		return null;
 	}
-
 	try {
 		return (await response.json()) as T;
 	} catch {
@@ -40,20 +41,6 @@ const parseJsonSafe = async <T>(response: Response): Promise<T | null> => {
 	}
 };
 
-const getForwardedCookieHeader = async () => {
-	if (typeof window !== 'undefined') {
-		return undefined;
-	}
-
-	try {
-		const { cookies } = await import('next/headers');
-		const cookieStore = await cookies();
-		const token = cookieStore.get('token')?.value;
-		return token ? `token=${token}` : undefined;
-	} catch {
-		return undefined;
-	}
-};
 
 export interface ApiRequestOptions {
 	withCredentials?: boolean;
@@ -70,27 +57,15 @@ export const requestApi = async <TResponse, TBody = unknown>(
 		throw new Error('NEXT_PUBLIC_API_BASE_URL environment variable is required');
 	}
 
-	const headers = new Headers(options.headers);
-	headers.set('Content-Type', 'application/json');
-
-	// Only forward cookies on server-side (client uses credentials: 'include')
-	if (typeof window === 'undefined') {
-		const cookieHeader = await getForwardedCookieHeader();
-		if (cookieHeader) {
-			headers.set('Cookie', cookieHeader);
-
-			// Extract token from cookie for Authorization header
-			const tokenMatch = cookieHeader.match(/token=([^;]+)/);
-			if (tokenMatch) {
-				headers.set('Authorization', `Bearer ${tokenMatch[1]}`);
-			}
-		}
-	}
-
+	const token = await getToken();
+	console.log("token ===> ",token)
 	const response = await fetch(`${baseUrl}${path}`, {
 		method,
-		headers,
-		credentials: options.withCredentials ? 'include' : 'same-origin',
+		headers :{
+			authorization : `Bearer ${token}`,
+			'Content-Type': 'application/json',
+		},
+		credentials: 'include',
 		cache: 'no-store',
 		body: body !== undefined && method !== 'GET' ? JSON.stringify(body) : undefined,
 	});
@@ -107,8 +82,6 @@ export const requestApi = async <TResponse, TBody = unknown>(
 		}
 		throw error;
 	}
-
-	// Response is OK, but may not have JSON payload
 	if (!payload) {
 		return { success: true, message: 'Request succeeded' } as ApiSuccessPayload<TResponse>;
 	}

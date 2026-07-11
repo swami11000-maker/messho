@@ -8,7 +8,7 @@ export const setCookies = async (accessToken: string) => {
 		},
 		body: JSON.stringify({ accessToken }),
 		cache: 'no-store',
-		credentials: 'same-origin',
+		credentials: 'include',
 	});
 
 	if (!response.ok) {
@@ -20,7 +20,7 @@ export const clearCookies = async () => {
 	const response = await fetch(AUTH_SESSION_ENDPOINT, {
 		method: 'DELETE',
 		cache: 'no-store',
-		credentials: 'same-origin',
+		credentials: 'include',
 	});
 
 	if (!response.ok) {
