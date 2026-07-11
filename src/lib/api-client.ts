@@ -58,7 +58,7 @@ export const requestApi = async <TResponse, TBody = unknown>(
 	}
 
 	const token = await getToken();
-	console.log("token ===> ",token)
+	// console.log("token ===> ",token)
 	const response = await fetch(`${baseUrl}${path}`, {
 		method,
 		headers :{

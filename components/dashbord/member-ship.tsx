@@ -50,10 +50,14 @@ export function MembershipPage({ publicMode = false }: { publicMode?: boolean })
 			}
 
 			error(response?.message ?? 'Failed to purchase membership.');
-		} catch (err: any) {
+		} catch (err) {
 			console.error('Buy Membership Error:', err);
 
-			error(err?.response?.data?.message || err?.message || 'Unable to purchase membership right now.');
+			const message =
+				err instanceof Error
+					? err.message
+					: 'Unable to purchase membership right now.';
+			error(message);
 		} finally {
 			setBuying(false);
 		}
