@@ -254,7 +254,7 @@ export default function SpinPage({ onSpin }: { onSpin?: () => Promise<number> })
         border: '1px solid rgba(234, 223, 205, 0.95)',
         background: 'linear-gradient(145deg, rgba(255,255,255,0.92), rgba(255,250,241,0.82))',
         boxShadow: '0 40px 110px rgba(16,25,54,0.18), inset 0 1px 0 rgba(255,255,255,0.9)',
-        padding: '18px',
+        padding: '18px', zIndex: '0'
       }}
     >
       <div

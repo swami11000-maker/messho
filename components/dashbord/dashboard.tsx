@@ -32,14 +32,14 @@ export function DashboardHome({ data }: { data: OverviewResponse['data'] }) {
 
 			<div className="grid gap-6 xl:grid-cols-[1.42fr_0.88fr]">
 				<div className="space-y-6">
-					<ActivityChart />
+					{/* <ActivityChart /> */}
 					<Transactions data={data.transactions ?? []} />
 					<QuickActions />
 				</div>
 				<div className="space-y-6">
 					<MembershipMini />
 					{/* <SpinPreviewCard /> */}
-					<RewardsGrowth />
+					{/* <RewardsGrowth /> */}
 				</div>
 			</div>
 		</PageShell>

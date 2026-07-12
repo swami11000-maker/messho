@@ -84,7 +84,7 @@ export function SpinPage() {
 
   const recentSpins = overview?.transactions.filter((transaction) => transaction.type === 'spin_reward').slice(0, 5) ?? [];
   return (
-    <div className="-mx-4 -my-7 min-h-screen bg-[#101936] px-4 py-8 lg:-mx-8 lg:px-8">
+    <div className="-mx-4 -my-7 min-h-screen bg-[#101936] px-4 py-8 lg:-mx-8 lg:px-8 -z-10">
       <div className="mx-auto grid max-w-[1500px] gap-6 xl:grid-cols-[1fr_370px]">
         <div className="text-center text-white">
           <div className="inline-flex items-center gap-2 rounded-full bg-white/10 px-4 py-2 text-xs font-black text-[#f4c95d]">
@@ -105,8 +105,8 @@ export function SpinPage() {
           </div>
         </div>
 
-        <div className="space-y-5">
-          <Panel className="p-5">
+        {/* <div className="space-y-5"> */}
+          {/* <Panel className="p-5">
             <h2 className="text-xl font-black text-[#121826]">Recent Spins</h2>
 
             {recentSpins.map((transaction) => (
@@ -123,9 +123,9 @@ export function SpinPage() {
                 <Status value="Won" />
               </div>
             ))}
-          </Panel>
+          </Panel> */}
 
-          <Panel className="p-5">
+          {/* <Panel className="p-5">
             <h2 className="text-xl font-black text-[#121826]">Your Statistics</h2>
 
             {[
@@ -139,8 +139,8 @@ export function SpinPage() {
                 <b>{b}</b>
               </p>
             ))}
-          </Panel>
-        </div>
+          </Panel> */}
+        {/* </div> */}
       </div>
     </div>
   );

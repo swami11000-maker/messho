@@ -328,12 +328,12 @@ export function CustomerShell({ children }: { children: ReactNode }) {
 	const { overview } = useOverview();
 
 	return (
-		<main className="min-h-screen bg-[#f6f8ff] text-slate-950">
+		<main className="min-h-screen bg-[#f6f8ff] text-slate-950 z-50 ">
 			<Topbar
 				onOpen={() => setOpen(true)}
 				user={overview?.user ?? null}
 			/>
-			<div className="grid lg:grid-cols-[292px_1fr]">
+			<div className="grid lg:grid-cols-[292px_1fr] z-50">
 				<Sidebar
 					open={open}
 					close={() => setOpen(false)}

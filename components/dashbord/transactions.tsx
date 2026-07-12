@@ -121,10 +121,10 @@ export function Transactions({ full = false, data }: { full?: boolean; data?: Tr
                 <td className="px-4 py-4 font-bold text-[#8a7653]">{t.description}</td>
                 <td
                   className={`px-4 py-4 font-black ${
-                    t.amount >= 0 ? "text-emerald-600" : "text-red-500"
+                    t.status !=='debited' ? "text-emerald-600" : "text-red-500"
                   }`}
                 >
-                  {t.amount >= 0 ? '+' : '-'} {formatMoney(Math.abs(t.amount))}
+                  {t.status !=='debited' ? '+' : '-'} {formatMoney(Math.abs(t.amount))}
                 </td>
                 <td className="px-4 py-4">
                   <Status value={t.status[0].toUpperCase() + t.status.slice(1)} />

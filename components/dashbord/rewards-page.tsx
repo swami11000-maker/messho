@@ -82,31 +82,6 @@ export function RewardsPage() {
 				desc="Track spin rewards, referral bonuses and monthly growth."
 				eyebrow="Reward Wallet"
 			/>
-
-			<div className="grid gap-5 md:grid-cols-3">
-				<Kpi
-					icon={Trophy}
-					title="Total Rewards"
-					value={formatMoney(overview?.user?.rewardBalance ?? 0)}
-					sub="Available balance"
-					tone="navy"
-				/>
-				<Kpi
-					icon={Gift}
-					title="Recent Spin Rewards"
-					value={formatMoney(spinRewards)}
-					sub="Latest rewardsHistory"
-					tone="gold"
-				/>
-				<Kpi
-					icon={Users}
-					title="Referral Bonus"
-					value={formatMoney(referralRewards)}
-					sub="Network earning"
-					tone="green"
-				/>
-			</div>
-
 			{/* Table Section */}
 			<Panel className="mt-6 p-5">
 				<h3 className="text-lg font-bold tracking-[-0.02em] text-[#121826]">Reward History</h3>
@@ -134,7 +109,7 @@ export function RewardsPage() {
 										className="border-b border-[#eadfcd]/40 last:border-0"
 									>
 										<td className="py-3 pr-4 font-medium text-[#121826]">{entry.name || '—'}</td>
-										<td className="py-3 pr-4 font-bold text-[#121826]">
+										<td className="py-3 pr-4 font-bold text-[#118103]">
 											{formatMoney(entry.amount * 100)}
 										</td>
 										<td className="py-3 pr-4">
